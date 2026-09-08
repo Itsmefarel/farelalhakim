@@ -1,0 +1,265 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   DESIGN SYSTEM — "Modern Interactive Tech Portfolio"
+   Single source of truth for color, type, spacing rhythm and motion.
+   Every component consumes these tokens; never hardcode a hex in a component.
+   ========================================================================= */
+@theme {
+  /* --- Surfaces ---------------------------------------------------------- */
+  --color-base: #050816; /* page background */
+  --color-surface: #0a1020; /* cards */
+  --color-surface-2: #0f172a; /* raised cards / hover */
+  --color-line: #1e293b; /* hairline borders */
+
+  /* --- Brand ------------------------------------------------------------- */
+  --color-primary: #2563eb;
+  --color-primary-soft: #3b82f6;
+  --color-primary-deep: #1d4ed8;
+  --color-accent: #38bdf8;
+  --color-accent-soft: #7dd3fc;
+
+  /* --- Content ----------------------------------------------------------- */
+  --color-fg: #ffffff;
+  --color-muted: #94a3b8;
+  --color-faint: #64748b;
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-display: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Fluid display sizes — scale with the viewport, no breakpoint jumps */
+  --text-display: clamp(2.75rem, 7vw, 5.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-headline: clamp(2rem, 4.4vw, 3.25rem);
+  --text-headline--line-height: 1.1;
+  --text-headline--letter-spacing: -0.025em;
+
+  /* --- Elevation & glow --------------------------------------------------- */
+  --shadow-glow: 0 0 0 1px rgb(56 189 248 / 0.14), 0 18px 60px -18px rgb(37 99 235 / 0.55);
+  --shadow-card: 0 24px 60px -32px rgb(2 6 23 / 0.95);
+
+  /* --- Motion ------------------------------------------------------------- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-marquee: marquee 34s linear infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.6s var(--ease-out-expo) infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+    }
+    50% {
+      transform: translateY(-18px) translateX(6px);
+    }
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.9);
+      opacity: 0.7;
+    }
+    70% {
+      transform: scale(1.35);
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================= */
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    /* Lenis drives the smooth scrolling; native smooth would fight it. */
+    scroll-behavior: auto;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-base);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: color-mix(in oklab, var(--color-accent) 30%, transparent);
+    color: #fff;
+  }
+
+  /* Keyboard users must always see where they are. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-base);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--color-primary), var(--color-accent));
+    border-radius: 999px;
+    border: 3px solid var(--color-base);
+  }
+
+  /* Respect the OS "reduce motion" setting — an accessibility requirement,
+     not an optional nicety. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ============================================================================
+   COMPONENT PRIMITIVES
+   ========================================================================= */
+@layer components {
+  /* Layout container used by every section for a consistent gutter */
+  .container-page {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* Frosted panel used by cards, navbar and modals */
+  .glass {
+    background: color-mix(in oklab, var(--color-surface) 72%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid color-mix(in oklab, var(--color-muted) 16%, transparent);
+  }
+
+  /* Gradient text for section eyebrows and headline accents */
+  .text-gradient {
+    background: linear-gradient(
+      92deg,
+      var(--color-fg) 0%,
+      var(--color-accent-soft) 45%,
+      var(--color-primary-soft) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Animated 1px gradient border (hover state on cards) */
+  .border-glow {
+    position: relative;
+  }
+  .border-glow::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(140deg, var(--color-accent), transparent 45%, var(--color-primary));
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out-expo);
+    pointer-events: none;
+  }
+  .border-glow:hover::after {
+    opacity: 1;
+  }
+
+  /* Faint technical grid — the "engineering blueprint" backdrop */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-muted) 8%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-muted) 8%, transparent) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Radial spotlight that fades content toward the page edges */
+  .mask-radial {
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 40%, transparent 100%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 40%, transparent 100%);
+  }
+}
+
+/* ============================================================================
+   UTILITIES
+   ========================================================================= */
+@utility text-balance {
+  text-wrap: balance;
+}
+
+/* Hides the OS cursor so the custom cursor can take over (pointer devices only) */
+@utility cursor-none-desktop {
+  @media (hover: hover) and (pointer: fine) {
+    cursor: none;
+  }
+}
